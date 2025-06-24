@@ -2,54 +2,168 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Modelos Divididos</title>
+  <title>Selector de Modelo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
     body {
       margin: 0;
-      display: flex;
-      height: 100vh;
       background-color: black;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      font-family: sans-serif;
     }
-    model-viewer {
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background-color: #111;
+      border-radius: 10px;
+    }
+
+    .menu button, .volver-btn {
+      width: 200px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .menu button:hover, .volver-btn:hover {
+      background-color: #555;
+    }
+
+    .viewer-container {
+      display: none;
+      flex-direction: row;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .viewer-container.double model-viewer {
       flex: 1;
       height: 100%;
-      border: 1px solid #222;
+    }
+
+    model-viewer.single {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    model-viewer {
+      display: none;
+    }
+
+    .volver-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
     }
   </style>
 </head>
 <body>
 
-  <!-- Primer modelo: Nave TinTin -->
-  <model-viewer 
-    src="NaveTinTin.glb"
-    alt="Modelo Nave TinTin"
-    camera-controls 
-    auto-rotate
-    tone-mapping="neutral"
-    shadow-intensity="1"
-    exposure="1"
-    environment-image="neutral"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-  >
-  </model-viewer>
+  <!-- Menú principal -->
+  <div class="menu" id="menu">
+    <button onclick="mostrarModelo('nave')">Nave Tin Tin</button>
+    <button onclick="mostrarModelo('casa')">Casa</button>
+    <button onclick="mostrarModelo('ambos')">Visualizar los dos</button>
+  </div>
 
-  <!-- Segundo modelo: CasaFinal -->
-  <model-viewer 
-    src="CasaFinal.glb"
-    alt="Modelo Casa Final"
-    camera-controls 
-    auto-rotate
-    tone-mapping="neutral"
-    shadow-intensity="1"
-    exposure="1"
-    environment-image="neutral"
-    ar
-    ar-modes="webxr scene-viewer quick-look"
-  >
-  </model-viewer>
+  <!-- Contenedor de visualización -->
+  <div class="viewer-container" id="viewer-container">
+    <button class="volver-btn" onclick="volverAlMenu()">Regresar</button>
+
+    <model-viewer 
+      id="modelo-nave"
+      src="NaveTinTin.glb"
+      alt="Modelo Nave TinTin"
+      camera-controls 
+      auto-rotate
+      tone-mapping="neutral"
+      shadow-intensity="1"
+      exposure="1"
+      environment-image="neutral"
+      ar
+      ar-modes="webxr scene-viewer quick-look"
+    ></model-viewer>
+
+    <model-viewer 
+      id="modelo-casa"
+      src="CasaFinal.glb"
+      alt="Modelo Casa Final"
+      camera-controls 
+      auto-rotate
+      tone-mapping="neutral"
+      shadow-intensity="1"
+      exposure="1"
+      environment-image="neutral"
+      ar
+      ar-modes="webxr scene-viewer quick-look"
+    ></model-viewer>
+  </div>
+
+  <script>
+    function mostrarModelo(opcion) {
+      const menu = document.getElementById('menu');
+      const viewerContainer = document.getElementById('viewer-container');
+      const nave = document.getElementById('modelo-nave');
+      const casa = document.getElementById('modelo-casa');
+
+      // Ocultar menú y preparar contenedor
+      menu.style.display = 'none';
+      viewerContainer.style.display = 'flex';
+
+      nave.style.display = 'none';
+      casa.style.display = 'none';
+      nave.classList.remove('single');
+      casa.classList.remove('single');
+      viewerContainer.classList.remove('double');
+
+      if (opcion === 'nave') {
+        nave.style.display = 'block';
+        nave.classList.add('single');
+      } else if (opcion === 'casa') {
+        casa.style.display = 'block';
+        casa.classList.add('single');
+      } else if (opcion === 'ambos') {
+        nave.style.display = 'block';
+        casa.style.display = 'block';
+        viewerContainer.classList.add('double');
+      }
+    }
+
+    function volverAlMenu() {
+      const menu = document.getElementById('menu');
+      const viewerContainer = document.getElementById('viewer-container');
+      const nave = document.getElementById('modelo-nave');
+      const casa = document.getElementById('modelo-casa');
+
+      // Ocultar modelos y contenedor
+      nave.style.display = 'none';
+      casa.style.display = 'none';
+      nave.classList.remove('single');
+      casa.classList.remove('single');
+      viewerContainer.classList.remove('double');
+      viewerContainer.style.display = 'none';
+
+      // Mostrar menú principal
+      menu.style.display = 'flex';
+    }
+  </script>
 
 </body>
 </html>
